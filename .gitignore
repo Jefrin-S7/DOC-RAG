@@ -1,10 +1,40 @@
-# Python-generated files
+# Python
 __pycache__/
 *.py[oc]
+*.pyc
 build/
 dist/
-wheels/
-*.egg-info
+*.egg-info/
 
-# Virtual environments
-.venv
+# Virtual environment
+venv/
+.venv/
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Google Auth
+token.pickle
+credentials.json
+service_account.json
+
+# Vector index
+vector_store.index
+chunks.pkl
+vectorizer.pkl
+
+# Node
+node_modules/
+dist/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# VS Code
+.vscode/
