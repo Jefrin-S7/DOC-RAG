@@ -2,6 +2,7 @@ import os
 import fitz
 import numpy as np
 from pinecone import Pinecone, ServerlessSpec
+import requests
 from sentence_transformers import SentenceTransformer
 from dotenv import load_dotenv
 
