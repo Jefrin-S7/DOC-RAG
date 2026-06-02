@@ -3,7 +3,7 @@ import fitz
 import numpy as np
 from pinecone import Pinecone, ServerlessSpec
 import requests
-from sentence_transformers import SentenceTransformer
+#from sentence_transformers import SentenceTransformer
 from dotenv import load_dotenv
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
