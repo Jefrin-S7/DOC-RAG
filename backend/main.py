@@ -1,4 +1,9 @@
 import os
+import warnings
+import threading
+import time
+warnings.filterwarnings("ignore", category=FutureWarning)
+
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -32,11 +37,18 @@ indexing_status = {
     "file_count": 0,
 }
 
+#verion 2 - conversation history
+
+class Message(BaseModel):
+    role: str
+    content: str
+
 #pydantic models
 
 class QuestionRequest(BaseModel):
     question: str
     top_k: int = TOP_K
+    history: list[Message]= []
 
 class QuestionResponse(BaseModel):
     answer: str
@@ -86,6 +98,54 @@ def run_indexing():
             "message": str(e),
             "file_count": 0,
         }
+
+# v2 - reload task
+def run_reload():
+    global indexing_status
+    try:
+        indexing_status = {
+            "status": "loading",
+            "message": "Clearing old pinecone index...",
+            "file_count": 0,
+
+        }
+
+        from pinecone import Pinecone
+        pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
+        index = pc.Index(os.getenv("PINECONE_INDEX", "doc-rag-index"))
+        index.delete(delete_all=True)
+        print("[Reload] Old index cleared.", flush=True)
+
+        run_indexing()   
+    except Exception as e:
+        indexing_status = {
+            "status": "error",
+            "message": str(e),
+            "file_count": 0,
+        }
+
+# Kepp alive ping for render
+
+#startup
+# @app.on_event("startup")
+# async def startup_event():
+#     global indexing_status
+#     try:
+#         if index_exists():
+#             indexing_status = {
+#                 "status": "ready",
+#                 "message": "Index loaded from the pinecone.",
+#                 "file_count": 0,
+#             }
+
+#             print("[Startup] Pinecone index found")
+#         else:
+#             print("[startp] No index - call/load to build one")
+#     except Exception as e:
+#         print(f"[Startup] Warning: {e}")
+        
+  
+
 
 
 #Routes
